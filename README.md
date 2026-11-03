@@ -2,7 +2,7 @@ Package: taylorosc
 Title: Formules de Taylor appliquees aux oscillations des batiments
 Version: 0.1.0
 Authors@R: 
-    person("Jeams Naël", "KUEKAM ZEUFACK", , "kuekamzeufack@gmail.com", role = c("aut", "cre"))
+    person("KUEKAM ZEUFACK","Jeams Nael",  , "kuekamzeufack@gmail.com", role = c("aut", "cre"))
 Description: Outils pour construire des polynomes de Taylor, majorer leur
     erreur (reste de Lagrange) et les appliquer a l'etude des vibrations d'un
     batiment : linearisation de la force de rappel, frequence propre,
