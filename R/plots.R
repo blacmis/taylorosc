@@ -1,5 +1,7 @@
-# Noms de colonnes utilises dans les graphiques
-utils::globalVariables(c("x", "y", "t", "serie", "valeur", "modele"))
+# Noms de colonnes utilises dans les graphiques (evite un avertissement
+# de R CMD check sur des "variables globales non definies")
+utils::globalVariables(c("x", "y", "t", "serie", "valeur", "modele",
+                         "etiquette"))
 
 # Palette de couleurs bien distinctes
 .palette <- c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e",
@@ -126,7 +128,7 @@ plot_taylor_error <- function(f, a = 0, n = 3, h_max = 1, var = "x") {
 #' Simule le batiment avec `k3 = 0` (modele lineaire) puis avec la valeur
 #' `k3` donnee, et trace les deux deplacements sur un meme graphique. Si
 #' `k3` n'est pas nul, une zone verte marque l'amplitude limite donnee par
-#' [linear_limit()].
+#' [linear_limit()], et la legende en bas en donne la valeur.
 #'
 #' @inheritParams simulate_oscillator
 #' @return Un objet `ggplot`.
@@ -161,17 +163,17 @@ compare_models <- function(m, k, k3, xi = 0.02, F0 = 0, Omega = 0,
                                ggplot2::aes(x = t, y = x, colour = modele))
   if (k3 != 0) {
     limite <- linear_limit(k, k3)
+    etiquette <- sprintf("limite du modele lineaire : +/- %.3f m", limite)
+    limites <- data.frame(y = c(-limite, limite), etiquette = etiquette)
     graphique <- graphique +
       ggplot2::annotate("rect", xmin = -Inf, xmax = Inf,
                         ymin = -limite, ymax = limite,
                         fill = "#1b9e77", alpha = 0.08) +
-      ggplot2::geom_hline(yintercept = c(-limite, limite),
-                          linetype = "dashed", colour = "#1b9e77") +
-      ggplot2::annotate("text", x = max(courbes$t), y = limite,
-                        label = sprintf("limite du modele lineaire : +/- %.3f m",
-                                        limite),
-                        hjust = 1, vjust = -0.5, colour = "#1b9e77",
-                        size = 4.5)
+      ggplot2::geom_hline(data = limites,
+                          ggplot2::aes(yintercept = y, linetype = etiquette),
+                          colour = "#1b9e77") +
+      ggplot2::scale_linetype_manual(values = stats::setNames("dashed",
+                                                              etiquette))
   }
   graphique +
     ggplot2::geom_line(linewidth = 0.9) +
@@ -180,7 +182,7 @@ compare_models <- function(m, k, k3, xi = 0.02, F0 = 0, Omega = 0,
     ggplot2::labs(
       title = "Deplacement du batiment : modele lineaire et non lineaire",
       subtitle = sous_titre, caption = parametres,
-      x = "temps (s)", y = "deplacement (m)", colour = NULL
+      x = "temps (s)", y = "deplacement (m)", colour = NULL, linetype = NULL
     ) +
     .theme_taylor()
 }

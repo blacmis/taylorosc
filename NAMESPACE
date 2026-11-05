@@ -2,6 +2,9 @@
 
 export(animate_taylor)
 export(compare_models)
+export(kiut_building)
+export(kiut_compare)
+export(kiut_scenarios)
 export(linear_limit)
 export(natural_frequency)
 export(plot_taylor)

@@ -45,7 +45,7 @@ Un objet \code{ggplot}.
 Simule le batiment avec \code{k3 = 0} (modele lineaire) puis avec la valeur
 \code{k3} donnee, et trace les deux deplacements sur un meme graphique. Si
 \code{k3} n'est pas nul, une zone verte marque l'amplitude limite donnee par
-\code{\link[=linear_limit]{linear_limit()}}.
+\code{\link[=linear_limit]{linear_limit()}}, et la legende en bas en donne la valeur.
 }
 \examples{
 compare_models(m = 2e6, k = 8e7, k3 = -1.6e8, F0 = 4e5,
