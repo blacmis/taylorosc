@@ -12,7 +12,8 @@ kiut_building(direction = c("Y", "X"))
 \value{
 Une liste avec le nom, la source, le nombre d'etages, la hauteur
 (m), le plan (m), la direction, \code{f0} (Hz), \code{omega0} (rad/s),
-\code{amplification}, \code{xi} et \code{acceleration_ambiante} (m/s2).
+\code{amplification}, \code{xi}, \code{acceleration_ambiante} (m/s2) et
+\code{deplacement_ambiant} (m).
 }
 \description{
 Rassemble les donnees REELLES publiees pour un batiment en beton arme de

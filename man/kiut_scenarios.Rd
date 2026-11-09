@@ -2,7 +2,7 @@
 % Please edit documentation in R/case_study.R
 \name{kiut_scenarios}
 \alias{kiut_scenarios}
-\title{Scenarios de validite du modele lineaire pour le batiment KIUT}
+\title{Scenarios de validite pour le batiment KIUT}
 \usage{
 kiut_scenarios(ratios = c(1, 10, 100), tol = 0.05, direction = "Y")
 }
@@ -14,20 +14,10 @@ kiut_scenarios(ratios = c(1, 10, 100), tol = 0.05, direction = "Y")
 \item{direction}{\code{"Y"} ou \code{"X"}.}
 }
 \value{
-Un data.frame avec les colonnes \code{rapport_k3_k},
-\code{amplitude_limite_m}, \code{deplacement_ambiant_m}, \code{marge_ambiant},
-\code{deplacement_service_m} et \code{lineaire_valide_service}.
+Un data.frame (voir \code{\link[=case_scenarios]{case_scenarios()}}).
 }
 \description{
-Pour plusieurs valeurs du rapport \eqn{|k_3|/k} (en m^-2), calcule
-l'amplitude limite du modele lineaire (\code{\link[=linear_limit]{linear_limit()}}) et la compare au
-deplacement ambiant mesure (acceleration / \eqn{\omega_0^2}) et au
-deplacement de service \eqn{H/500}.
-}
-\details{
-Seul le rapport \eqn{k_3/k} intervient : la masse n'a pas besoin d'etre
-connue. Le rapport \eqn{k_3/k} ne peut pas etre mesure sur un batiment
-sain : on le traite comme un scenario.
+Raccourci de \code{\link[=case_scenarios]{case_scenarios()}} applique a \code{\link[=kiut_building]{kiut_building()}}.
 }
 \examples{
 kiut_scenarios()

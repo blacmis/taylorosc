@@ -19,11 +19,7 @@ kiut_compare(ratio = 10, mass = 2.1e+07, t_end = 60, direction = "Y")
 Un objet \code{ggplot} (voir \code{\link[=compare_models]{compare_models()}}).
 }
 \description{
-Simule le batiment KIUT force a sa frequence propre. La force est choisie
-pour que le deplacement lineaire en regime etabli atteigne le deplacement
-de service \eqn{H/500}. La raideur vaut \eqn{k = m \omega_0^2} et
-\eqn{k_3 = -ratio \cdot k}. La masse \code{mass} n'influence pas les
-deplacements, car elle se simplifie dans l'equation du mouvement.
+Raccourci de \code{\link[=case_compare]{case_compare()}} applique a \code{\link[=kiut_building]{kiut_building()}}.
 }
 \examples{
 kiut_compare(ratio = 10)
