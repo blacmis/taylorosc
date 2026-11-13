@@ -1,121 +1,116 @@
 # taylorosc
 
-**Formules de Taylor appliquées aux oscillations des bâtiments** : un package R.
+Formules de Taylor appliquées aux oscillations des bâtiments et à l'analyse vibratoire : un package R.
 
 Projet du cours *Introduction à R*, École Nationale Supérieure Polytechnique de Douala (ENSPD), niveau 3, filière SDIA (Science des Données et Intelligence Artificielle).
 
-**Auteur :** KUEKAM ZEUFACK JEAMS NAEL
+Auteur : KUEKAM ZEUFACK JEAMS NAEL
 
 ---
 
-## Objectif
+## Objectif du projet
 
-Un bâtiment soumis au vent ou à un séisme oscille. Sa force de rappel (la force qui le ramène vers sa position d'équilibre) est une courbe compliquée. Les formules de Taylor permettent de la remplacer par un polynôme simple, de **mesurer l'erreur commise**, et de **simuler** le mouvement.
+Un bâtiment soumis au vent ou à un séisme oscille. Sa force de rappel non linéaire peut être approchée par un polynôme de Taylor (développement d'ordre 3, fonction impaire : $g(x) \approx k\,x + k_3\,x^3$).
 
-Le package `taylorosc` met ces outils à la disposition d'un ingénieur :
+Le package taylorosc fournit une boîte à outils complète pour l'ingénieur structure :
+1. Mathématiques : Construction de polynômes de Taylor, calcul des coefficients et majoration rigoureuse de l'erreur (reste de Lagrange).
+2. Dynamique des structures : Simulation pas à pas du mouvement par la méthode des différences centrées, calcul de la fréquence propre et de l'amplitude limite garantissant la validité du modèle linéaire.
+3. Identification expérimentale : Extraction automatique de la fréquence propre $f_0$ (par analyse spectrale et lissage du périodogramme) et du taux d'amortissement $\xi$ (par régression sur la décroissance des amplitudes en vibration libre).
+4. Études de cas réels : Exploitation de mesures expérimentales réelles issues de deux bâtiments :
+   - Bâtiment de l'UBC (Vancouver, Canada) : Immeuble hybride bois-béton de 18 étages (53 m), à partir de données de capteurs réels (microtremblements et vibrations libres).
+   - Bâtiment de Tachkent (Ouzbekistan) : Immeuble en béton armé de 6 étages.
 
-1. construire des polynômes de Taylor et borner leur erreur ;
-2. modéliser la force de rappel d'un bâtiment ;
-3. calculer sa fréquence propre ;
-4. savoir jusqu'à quelle amplitude le modèle linéaire reste valable ;
-5. simuler son déplacement et comparer les modèles linéaire et non linéaire.
+---
 
-## Les idées mathématiques
+## Les bases mathématiques
 
-**Formule de Taylor d'ordre $n$ en $a$ :**
+Formule de Taylor d'ordre $n$ en $a$ :
 
-$$
-f(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}\,(x-a)^k + R_n(x)
-$$
+$$f(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}\,(x-a)^k + R_n(x)$$
 
-**Reste de Lagrange (borne de l'erreur) :**
+Reste de Lagrange (borne de l'erreur) :
 
-$$
-|R_n(x)| \le \frac{M}{(n+1)!}\,|x-a|^{n+1}
-\qquad\text{avec}\qquad
-M = \max \left|f^{(n+1)}\right|
-$$
+$$\vert{}R_n(x)\vert{} \le \frac{M}{(n+1)!}\,\vert{}x-a\vert{}^{n+1} \qquad\text{avec}\qquad M = \max \left\vert{}f^{(n+1)}\right\vert{}$$
 
-**Force de rappel d'un bâtiment (Taylor d'ordre 3, fonction impaire) :**
+Équation du mouvement (système à un degré de liberté) :
 
-$$
-g(x) \approx k\,x + k_3\,x^3
-$$
+$$m\,\ddot x + c\,\dot x + g(x) = F(t)$$
 
-**Équation du mouvement :**
+---
 
-$$
-m\,\ddot x + c\,\dot x + g(x) = F(t)
-$$
-
-Elle est résolue pas à pas par la méthode des différences centrées, qui provient elle aussi des développements de Taylor.
-
-## Fonctions du package
+## Fonctions principales du package
 
 | Fonction | Rôle |
 |---|---|
-| `taylor_coef()` | coefficients du polynôme de Taylor |
-| `taylor_poly()` | valeur du polynôme de Taylor |
-| `taylor_error()` | erreur réelle et majorant de Lagrange |
-| `restoring_force()` | force de rappel $kx + k_3x^3$ |
-| `restoring_force_taylor()` | extrait $k$ et $k_3$ d'une force de rappel quelconque |
-| `natural_frequency()` | pulsation, fréquence et période propres |
-| `linear_limit()` | amplitude limite du modèle linéaire |
-| `simulate_oscillator()` | simulation du déplacement du bâtiment |
-| `plot_taylor()` | courbes de Taylor de plusieurs ordres |
-| `plot_taylor_error()` | erreur contre majorant de Lagrange |
-| `compare_models()` | modèle linéaire contre non linéaire |
-| `animate_taylor()` | animation : le polynôme s'améliore avec l'ordre |
+| taylor_coef() | Coefficients du polynôme de Taylor |
+| taylor_poly() | Évaluation du polynôme de Taylor |
+| taylor_error() | Erreur réelle et majorant de Lagrange |
+| restoring_force() | Force de rappel non linéaire $kx + k_3x^3$ |
+| restoring_force_taylor() | Extrait $k$ et $k_3$ d'une force de rappel quelconque |
+| natural_frequency() | Pulsation, fréquence et période propres |
+| linear_limit() | Amplitude limite du modèle linéaire |
+| estimate_frequency() | Estimation de la fréquence propre par spectre (périodogramme) |
+| estimate_damping() | Estimation du taux d'amortissement $\xi$ par vibration libre |
+| ubc_signal() | Chargement des signaux bruts de l'UBC (microtremblements et vibration libre) |
+| ubc_building() | Paramètres et identification complète sur le bâtiment UBC |
+| kiut_building() | Paramètres et analyse du bâtiment KIUT de Tachkent |
+| case_scenarios() / kiut_scenarios() | Tableaux de validité du modèle linéaire selon $k_3/k$ |
+| case_compare() / kiut_compare() | Simulation comparative linéaire vs non linéaire sur un bâtiment |
+| simulate_oscillator() | Simulation temporelle (différences centrées) |
+| plot_taylor() / plot_taylor_error() | Graphiques des polynômes de Taylor et de l'erreur de Lagrange |
+| plot_spectrum() / plot_free_decay() | Visualisation du spectre et de la décroissance libre |
+| compare_models() / animate_taylor() | Comparaison graphique des modèles et animation pas à pas |
+
+---
 
 ## Installation
 
-```r
 install.packages("devtools")
 devtools::install_github("blacmis/taylorosc")
-```
+---
 
-## Exemple rapide
+## Exemple d'utilisation avec les données réelles (UBC)
 
-```r
+`r
 library(taylorosc)
 
-# Polynôme de Taylor de sin(x) en 0, ordre 5
-taylor_poly("sin(x)", x = 0.5, a = 0, n = 5)
+# 1. Charger et analyser les données réelles du bâtiment UBC
+bat <- ubc_building()
+bat$f0  # Fréquence propre mesurée (Hz)
+bat$xi  # Taux d'amortissement estimé
 
-# Erreur réelle et majorant de Lagrange
-taylor_error("sin(x)", x = c(0.1, 0.5, 1), a = 0, n = 3)
+# 2. Analyser les scénarios de validité du modèle linéaire
+case_scenarios(bat)
 
-# Fréquence propre d'un bâtiment (k en N/m, m en kg)
-natural_frequency(k = 8e7, m = 2e6)
+# 3. Tracer le spectre et identifier le pic de fréquence
+est <- estimate_frequency(ubc_signal("1_Y")$v, fs = 200, fmin = 0.3, fmax = 5)
+plot_spectrum(est)
 
-# Amplitude limite du modèle linéaire (tolérance de 5 %)
-linear_limit(k = 8e7, k3 = -1.6e8, tol = 0.05)
+# 4. Tracer la décroissance libre et l'amortissement
+libre <- ubc_signal("3_Y_free")
+amort <- estimate_damping(libre$t, libre$v, f0 = bat$f0, t_start = 20, t_end = 45, min_amplitude = 0.012)
+plot_free_decay(libre$t, libre$v, amort)
 
-# Simulation sous une force sinusoïdale à la résonance
-res <- simulate_oscillator(m = 2e6, k = 8e7, xi = 0.02, F0 = 4e5,
-                           Omega = sqrt(8e7 / 2e6), t_end = 100)
+---
 
-# Graphiques
-plot_taylor("sin(x)")
-compare_models(m = 2e6, k = 8e7, k3 = -1.6e8, F0 = 4e5,
-               Omega = sqrt(8e7 / 2e6), t_end = 60)
-```
+## Tests unitaires
 
-## Tests
+Le package intègre une batterie complète de 60 tests automatiques (`testthat`) validant l'ensemble des calculs mathématiques, numériques et physiques :
 
-Le package contient des tests automatiques (`testthat`), lancés avec :
-
-```r
+r
 devtools::test()
-```
+`
 
-Ils comparent les résultats des fonctions à des valeurs connues à la main : par exemple l'amplitude à la résonance $x_{\max} = F_0 / (2\,\xi\,k)$.
+---
 
-## Limites
+## Limites du modèle
 
-- Le bâtiment est modélisé par **un seul degré de liberté** (une masse sur un ressort non linéaire).
-- Le majorant de Lagrange est estimé numériquement sur une grille de points.
-- Les valeurs des exemples ci-dessus sont **illustratives**.
+1. Modèle à un seul degré de liberté (SDOF) : Le bâtiment est réduit à une masse unique équivalente sur un ressort (mode fondamental dominant). Les modes supérieurs de vibration et les déplacements relatifs inter-étages ne sont pas modélisés.
+2. Non-linéarité restreinte : La force de rappel est limitée au développement de Taylor d'ordre 3 ($k\,x + k_3\,x^3$), ce qui suppose un comportement symétrique (identique dans les deux sens d'oscillation).
+3. Estimation numérique du majorant : Le majorant de l'erreur de Lagrange est évalué numériquement sur une grille discrète de 1000 points, ce qui dépend de la finesse de cette grille.
+4. Sensibilité au bruit expérimental : L'identification du taux d'amortissement $\xi$ par détection des pics en vibration libre dépend du choix de la fenêtre temporelle (`t_start`, `t_end`), du seuil de bruit (`min_amplitude`) et du lissage appliqué.
+
+---
 
 ## Licence
 
